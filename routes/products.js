@@ -220,4 +220,12 @@ router.post("/send-mail", async function (req, res, next) {
     res.json({ status: 0, message: "Gửi mail thất bại" + err });
   }
 });
+
+router.get("/news", function(req, res){
+  try{
+  res.json({new:"true"});
+  }catch(e){
+    res.status(400).json({ status: false, message: "Error" + e });
+  }
+})
 module.exports = router;
