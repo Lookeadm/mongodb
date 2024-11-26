@@ -8,12 +8,14 @@ const mongoose = require('mongoose');
 require("./models/userModel");
 require("./models/productModel");
 require("./models/studentModel");
+require("./models/categoryModel");
 //http://localhost:3000
 var indexRouter = require('./routes/index');
 //http://localhost:3000/users
 var usersRouter = require('./routes/users');
 var productsRouter = require('./routes/products');
 var studentRouter = require('./routes/students');
+var studentRouter = require('./routes/categories');
 var app = express();
 
 // view engine setup
@@ -35,7 +37,7 @@ app.use('/', indexRouter);
 app.use('/users', usersRouter);
 app.use('/products', productsRouter);
 app.use('/students', studentRouter);
-
+app.use('/categories', categoryRouter);
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
   next(createError(404));
