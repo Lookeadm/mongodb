@@ -72,7 +72,12 @@ router.post("/login", async function (req, res) {
     else{
       var token = JWT.sign({username: username}, config.SECRETKEY, {expiresIn: "1m"});
       const refreshToken = JWT.sign({id: username._id},config.SECRETKEY,{expiresIn: '1h'})
-      res.status(200).json({status: true, message:"Đăng nhập thành công" + " " + token});
+      res.status(200).json({
+        status: true,
+        message: "Đăng nhập thành công",
+        token: token,
+        refreshToken: refreshToken,
+      });
     }
   }catch(e){
     res.status(400).json({status: false, message:"Error" + e});
