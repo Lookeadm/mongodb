@@ -1,13 +1,12 @@
 var express = require('express');
 var router = express.Router();
 
-const userModel = require("../models/categoryModel");
 const JWT = require('jsonwebtoken');
 const config = require("../until/tokenConfig");
 const categoryModel = require('../models/categoryModel');
 
 router.get("/all", async function (req, res) {
-    var list = await userModel.find();//Lay tat ca
+    var list = await categoryModel.find();//Lay tat ca
     res.json(list);
 });
 router.post("/add", async function (req, res) {
@@ -47,3 +46,5 @@ router.delete("/delete/:id", async function (req, res) {
         res.status(400).json({ status: false, message: "Error" });
     }
 });
+
+module.exports = router;

@@ -15,7 +15,7 @@ var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
 var productsRouter = require('./routes/products');
 var studentRouter = require('./routes/students');
-var studentRouter = require('./routes/categories');
+var categoryRouter = require('./routes/categories');
 var app = express();
 
 // view engine setup
