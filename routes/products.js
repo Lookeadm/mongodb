@@ -18,7 +18,7 @@ router.get("/all", async function (req, res) {
           res.status(403).json({ "status": 403, "err": err });
         } else {
           //xử lý chức năng tương ứng với API
-          var list = await productModel.find().populate("userID");//Lay tat ca
+          var list = await productModel.find().populate("categoryID");//Lay tat ca
           res.status(200).json(list);
         }
       });

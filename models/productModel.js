@@ -9,7 +9,7 @@ const product = new schema({
     },
     gia:{type:Number},
     soLuong:{type:Number},
-    userID:{type:oid, ref: "user"},
+    categoryID:{type:oid, ref: "category"},
 });
 // Neu khong ton tai cac thuoc tinh tren thi tu tao user
 // Neu co ton tai cac thuoc tinh tren thi se tu dong lien ket voi collection do
