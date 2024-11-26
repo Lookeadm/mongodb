@@ -19,7 +19,7 @@ router.get("/all", async function (req, res) {
         } else {
           //xử lý chức năng tương ứng với API
           var list = await productModel.find().populate("categoryID");//Lay tat ca
-          res.status(200).json(list);
+          res.status(200).json({data: list});
         }
       });
     } else {
