@@ -8,8 +8,20 @@ const config = require("../until/tokenConfig");
 
 // 1.Lấy danh sách người dùng
 router.get("/all", async function(req, res) {
-  var list = await userModel.find({},"username age");//Lay tat ca
-  res.json(list);
+  const token = req.header("Authorization").split(' ')[1];
+    if (token) {
+      JWT.verify(token, config.SECRETKEY, async function (err, id) {
+        if (err) {
+          res.status(403).json({ "status": 403, "err": err });
+        } else {
+          //xử lý chức năng tương ứng với API
+          var list = await userModel.find({},"username age");//Lay tat ca
+          res.json(list);
+        }
+      });
+    } else {
+      res.status(401).json({ "status": 401 });
+    }
 })
 //localhost:3000/users/detail/?id=xxx&value2=xxxx
 //localhost:3000/users/detail/xxx
@@ -67,8 +79,6 @@ router.post("/login", async function (req, res) {
     res.status(400).json({status: false, message:"Error" + e});
   }
 })
-// 4. Tìm user
-
 //Lay danh sach co dieu kien
 //localhost:3000/users/get-ds-trong-khoang?tuoi=xx
 router.get("/get-ds", async function(req, res) {
@@ -99,7 +109,4 @@ router.get("/get-ds-trong-khoang", async function(req, res) {
     res.status(400).json({status: false, message:"Error"});
   }
 });
-
-
-
 module.exports = router;
