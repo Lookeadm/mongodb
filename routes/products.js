@@ -7,7 +7,7 @@ const fs = require('fs');
 const path = require('path');
 const JWT = require('jsonwebtoken');
 const config = require("../until/tokenConfig");
-//- Lấy danh sách tất cả các sản phẩm
+//- 1.Lấy danh sách tất cả các sản phẩm
 router.get("/all", async function (req, res) {
   try {
     //Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImFkbWluIiwiaWF0IjoxNzMyMTYwNjU1LCJleHAiOjE3MzIxNjA2ODV9.IAy9hVwgr5BjVjAza9yNXCLVwHgw94CscB3Ncvhe17g
@@ -19,7 +19,7 @@ router.get("/all", async function (req, res) {
         } else {
           //xử lý chức năng tương ứng với API
           var list = await productModel.find().populate("categoryID");//Lay tat ca
-          res.status(200).json({data: list});
+          res.status(200).json({ data: list });
         }
       });
     } else {
@@ -29,7 +29,7 @@ router.get("/all", async function (req, res) {
     res.status(400).json({ status: false, message: "Error" });
   }
 });
-//- Lấy thông tin chi tiết của sản phẩm
+//- 2.Lấy thông tin chi tiết của sản phẩm
 router.get("/detail/:id", async function (req, res) {
   try {
     const token = req.header("Authorization").split(' ')[1];
@@ -58,7 +58,85 @@ router.get("/detail/:id", async function (req, res) {
     res.status(400).json({ status: false, meassage: "Error" + e });
   }
 });
-//- Lấy danh sách tất cả các sản phẩm có số lượng lớn hơn 20
+//3. Thêm sản phẩm
+router.post("/add", async function (req, res) {
+  try {
+    const token = req.header("Authorization").split(' ')[1];
+    if (token) {
+      JWT.verify(token, config.SECRETKEY, async function (err, id) {
+        if (err) {
+          res.status(403).json({ "status": 403, "err": err });
+        } else {
+          //xử lý chức năng tương ứng với API
+          const { tensp, gia, soLuong } = req.body;
+          const newItem = { tensp, gia, soLuong };
+          await productModel.create(newItem);
+          res.status(200).json({ status: true, message: "Successfully" });
+        }
+      });
+    } else {
+      res.status(401).json({ "status": 401 });
+    }
+  } catch (e) {
+    res.status(400).json({ status: false, message: "Error" });
+  }
+});
+//4. Sửa sản phẩm
+router.put("/edit", async function (req, res) {
+  try {
+    const token = req.header("Authorization").split(' ')[1];
+    if (token) {
+      JWT.verify(token, config.SECRETKEY, async function (err, id) {
+        if (err) {
+          res.status(403).json({ "status": 403, "err": err });
+        } else {
+          //xử lý chức năng tương ứng với API
+          const { id, tensp, gia, soLuong } = req.body;
+          var itemUpdate = await productModel.findById(id);
+
+          if (itemUpdate) {
+            itemUpdate.tensp = tensp ? tensp : itemUpdate.tensp;
+            itemUpdate.gia = gia ? gia : itemUpdate.gia;
+            itemUpdate.soLuong = soLuong ? soLuong : itemUpdate.soLuong;
+            await itemUpdate.save();
+            res.status(200).json({ status: true, message: "Successfully" });
+          }
+          else {
+            res.status(300).json({ status: true, message: "Not found" });
+          }
+        }
+      });
+    } else {
+      res.status(401).json({ "status": 401 });
+    }
+
+  } catch (e) {
+    res.status(400).json({ status: false, message: "Error" });
+  }
+});
+//5. Xóa sản phẩm
+router.delete("/delete/:id", async function (req, res) {
+  try {
+    const token = req.header("Authorization").split(' ')[1];
+    if (token) {
+      JWT.verify(token, config.SECRETKEY, async function (err, id) {
+        if (err) {
+          res.status(403).json({ "status": 403, "err": err });
+        } else {
+          //xử lý chức năng tương ứng với API
+          const { id } = req.params;
+          await productModel.findByIdAndDelete(id);
+          res.status(200).json({ status: true, message: "Successfully delete" });
+        }
+      });
+    } else {
+      res.status(401).json({ "status": 401 });
+    }
+  } catch (e) {
+    res.status(400).json({ status: false, message: "Error" });
+  }
+});
+//6. Lấy danh sách tất cả các sản phẩm có số lượng lớn hơn 20
 router.get("/get-ds-lon-hon", async function (req, res) {
   try {
     const token = req.header("Authorization").split(' ')[1];
@@ -98,7 +176,7 @@ router.get("/get-ds-trong-khoang", async function (req, res) {
       });
     } else {
       res.status(401).json({ "status": 401 });
-    }  
+    }
   } catch (e) {
     res.status(400).json({ status: false, message: "Error" });
   }
@@ -121,46 +199,6 @@ router.get("/get-ds-trong-khoang2", async function (req, res) {
     } else {
       res.status(401).json({ "status": 401 });
     }
-  } catch (e) {
-    res.status(400).json({ status: false, message: "Error" });
-  }
-})
-//Thêm
-router.post("/add", async function (req, res) {
-  try {
-    const { tensp, gia, soLuong } = req.body;
-    const newItem = { tensp, gia, soLuong };
-    await productModel.create(newItem);
-    res.status(200).json({ status: true, message: "Successfully" });
-  } catch (e) {
-    res.status(400).json({ status: false, message: "Error" });
-  }
-});
-router.put("/edit", async function (req, res) {
-  try {
-    const { id, tensp, gia, soLuong } = req.body;
-    var itemUpdate = await productModel.findById(id);
-
-    if (itemUpdate) {
-      itemUpdate.tensp = tensp ? tensp : itemUpdate.tensp;
-      itemUpdate.gia = gia ? gia : itemUpdate.gia;
-      itemUpdate.soLuong = soLuong ? soLuong : itemUpdate.soLuong;
-      await itemUpdate.save();
-      res.status(200).json({ status: true, message: "Successfully" });
-    }
-    else {
-      res.status(300).json({ status: true, message: "Not found" });
-    }
-  } catch (e) {
-    res.status(400).json({ status: false, message: "Error" });
-  }
-});
-//Delete
-router.delete("/delete/:id", async function (req, res) {
-  try {
-    const { id } = req.params;
-    await productModel.findByIdAndDelete(id);
-    res.status(200).json({ status: true, message: "Successfully delete" });
   } catch (e) {
     res.status(400).json({ status: false, message: "Error" });
   }
@@ -221,10 +259,10 @@ router.post("/send-mail", async function (req, res, next) {
   }
 });
 
-router.get("/news", function(req, res){
-  try{
-  res.json({new:"true"});
-  }catch(e){
+router.get("/news", function (req, res) {
+  try {
+    res.json({ new: "true" });
+  } catch (e) {
     res.status(400).json({ status: false, message: "Error" + e });
   }
 })
