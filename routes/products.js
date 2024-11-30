@@ -159,7 +159,7 @@ router.get("/get-ds-lon-hon", async function (req, res) {
     res.status(400).json({ status: false, message: "Error" });
   }
 });
-//- Lấy danh sách sản phẩm có giá từ 20000 đến 50000
+//- 7.Lấy danh sách sản phẩm có giá từ 20000 đến 50000
 router.get("/get-ds-trong-khoang", async function (req, res) {
   try {
     const token = req.header("Authorization").split(' ')[1];
